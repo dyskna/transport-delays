@@ -75,12 +75,15 @@ builder.Services.AddControllers();
 // CORS (dla frontendu React)
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowLocalhost3000", policy =>
+    options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:3000")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+        policy.WithOrigins(
+            "http://localhost:3000",   // frontend lokalny HTTP
+            "https://localhost:3000",  // frontend lokalny HTTPS
+            "transport-delays.pages.dev"  // docelowa domena produkcyjna
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod();
     });
 });
 
