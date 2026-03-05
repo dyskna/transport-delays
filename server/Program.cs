@@ -85,7 +85,7 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(
             "http://localhost:3000",   // frontend lokalny HTTP
             "https://localhost:3000",  // frontend lokalny HTTPS
-            "transport-delays.pages.dev"  // docelowa domena produkcyjna
+            "https://transport-delays.pages.dev"  // docelowa domena produkcyjna
         )
         .AllowAnyHeader()
         .AllowAnyMethod();
