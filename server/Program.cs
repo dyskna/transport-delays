@@ -108,7 +108,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseCors("AllowLocalhost3000");
+app.UseCors("AllowFrontend");
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
