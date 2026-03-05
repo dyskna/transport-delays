@@ -9,7 +9,6 @@ namespace server.Data
         {
         }
 
-        // === DbSety (tabele) ===
         public DbSet<Ride> Rides { get; set; }
         public DbSet<Report> Reports { get; set; }
         public DbSet<User> Users { get; set; }
@@ -21,7 +20,6 @@ namespace server.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // === USER ===
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
@@ -38,18 +36,15 @@ namespace server.Data
                 .HasForeignKey(v => v.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // === RIDE ===
             modelBuilder.Entity<Ride>()
                 .HasMany(r => r.Reports)
                 .WithOne(rp => rp.Ride)
                 .HasForeignKey(rp => rp.RideId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // === REPORT ===
             modelBuilder.Entity<Report>()
                 .HasIndex(r => new { r.TransportType, r.LineNumber });
 
-            // === VERIFICATION ===
             modelBuilder.Entity<Verification>()
                 .HasIndex(v => new { v.UserId, v.ReportId })
                 .IsUnique(); // jeden użytkownik może głosować tylko raz na dane zgłoszenie
@@ -65,11 +60,11 @@ namespace server.Data
     .HasForeignKey(s => s.JourneyId)
     .OnDelete(DeleteBehavior.Cascade);
 
-modelBuilder.Entity<JourneySegment>()
-    .HasOne(s => s.Ride)
-    .WithMany()
-    .HasForeignKey(s => s.RideId)
-    .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<JourneySegment>()
+                .HasOne(s => s.Ride)
+                .WithMany()
+                .HasForeignKey(s => s.RideId)
+                .OnDelete(DeleteBehavior.Restrict);
 
         }
     }

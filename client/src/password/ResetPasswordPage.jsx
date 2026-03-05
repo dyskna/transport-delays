@@ -15,6 +15,8 @@ export default function ResetPasswordPage() {
   const [saving, setSaving] = useState(false);
   const navigate = useNavigate();
 
+  const API = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
     if (!token)
       setAlert({
@@ -44,14 +46,11 @@ export default function ResetPasswordPage() {
 
     try {
       setSaving(true);
-      const res = await fetch(
-        "https://localhost:7265/api/Auth/reset-password",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token, newPassword }),
-        }
-      );
+      const res = await fetch(`${API}/api/Auth/reset-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, newPassword }),
+      });
 
       if (!res.ok) throw new Error(await res.text());
 

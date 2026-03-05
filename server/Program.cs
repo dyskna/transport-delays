@@ -10,9 +10,7 @@ using DotNetEnv;
 Env.Load();
 var builder = WebApplication.CreateBuilder(args);
 
-// ===========================
 // JWT konfiguracja
-// ===========================
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -27,9 +25,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// ===========================
 // Swagger konfiguracja
-// ===========================
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
@@ -66,9 +62,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// ===========================
 // Baza danych + serwisy
-// ===========================
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -78,9 +72,7 @@ builder.Services.AddScoped<EmailService>();
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 
-// ===========================
 // CORS (dla frontendu React)
-// ===========================
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowLocalhost3000", policy =>
@@ -97,20 +89,16 @@ builder.Services.AddHostedService<JourneyBackgroundService>();
 
 var app = builder.Build();
 
-// ===========================
 // Middleware
-// ===========================
+// Middleware
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Railert API V1");
+    });
 }
-
-app.UseSwagger();
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-});
 
 app.UseCors("AllowLocalhost3000");
 app.UseHttpsRedirection();
@@ -131,7 +119,6 @@ using (var scope = app.Services.CreateScope())
     {
         context.Database.Migrate();
 
-        // Jeśli masz plik SeedData.cs – uruchomi inicjalizację
         if (typeof(SeedData).GetMethod("Initialize") != null)
             SeedData.Initialize(context);
     }

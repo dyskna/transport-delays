@@ -9,19 +9,18 @@ export default function ForgotPasswordPage() {
   const [sending, setSending] = useState(false);
   const navigate = useNavigate();
 
+  const API = process.env.REACT_APP_API_URL;
+
   async function handleSubmit(e) {
     e.preventDefault();
     setSending(true);
 
     try {
-      const res = await fetch(
-        "https://localhost:7265/api/Auth/request-password-reset",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email }),
-        }
-      );
+      const res = await fetch(`${API}/api/Auth/request-password-reset`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
 
       if (!res.ok) throw new Error(await res.text());
 

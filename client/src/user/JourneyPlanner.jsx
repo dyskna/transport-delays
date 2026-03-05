@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import AuthHeader from "../components/AuthHeader";
 
-const API_BASE = "https://localhost:7265/api";
+const API = process.env.REACT_APP_API_URL;
 
 async function apiFetch(url, options = {}) {
   // pobieramy cały obiekt "auth"
@@ -39,7 +39,7 @@ export default function JourneyPlanner() {
 
   // === pobierz dostępne przejazdy ===
   useEffect(() => {
-    apiFetch(`${API_BASE}/ride`)
+    apiFetch(`${API}/ride`)
       .then(setRides)
       .catch((err) => console.error("Błąd przy pobieraniu ride:", err))
       .finally(() => setLoading(false));
@@ -47,7 +47,7 @@ export default function JourneyPlanner() {
 
   // === pobierz moje podróże ===
   useEffect(() => {
-    apiFetch(`${API_BASE}/journey/my`)
+    apiFetch(`${API}/journey/my`)
       .then(setJourneys)
       .catch((err) => {
         console.warn("Nie udało się pobrać podróży:", err.message);
@@ -58,7 +58,7 @@ export default function JourneyPlanner() {
   // === dodawanie / usuwanie z planu ===
   function toggleRide(id) {
     setSelectedRides((prev) =>
-      prev.includes(id) ? prev.filter((r) => r !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((r) => r !== id) : [...prev, id],
     );
   }
 
@@ -70,7 +70,7 @@ export default function JourneyPlanner() {
     }
 
     try {
-      await apiFetch(`${API_BASE}/journey`, {
+      await apiFetch(`${API}/journey`, {
         method: "POST",
         body: JSON.stringify(selectedRides),
       });

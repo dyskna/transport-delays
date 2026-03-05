@@ -17,6 +17,8 @@ export default function ChangePasswordPage() {
   const [alert, setAlert] = useState({ message: "", type: "" });
   const navigate = useNavigate();
 
+  const API = process.env.REACT_APP_API_URL;
+
   async function handleSubmit(e) {
     e.preventDefault();
     setAlert({ message: "", type: "" });
@@ -39,17 +41,14 @@ export default function ChangePasswordPage() {
 
     try {
       setSaving(true);
-      const res = await fetch(
-        "https://localhost:7265/api/Auth/change-password",
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user.token}`,
-          },
-          body: JSON.stringify({ currentPassword, newPassword }),
-        }
-      );
+      const res = await fetch(`${API}/api/Auth/change-password`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
 
       if (!res.ok) throw new Error(await res.text());
 

@@ -6,8 +6,7 @@ import alertRed from "../assets/alertred.png";
 import alertYellow from "../assets/alertyellow.png";
 import { useAuth } from "../context/AuthContext";
 
-const API_URL = "https://localhost:7265/api/report";
-const VERIFY_URL = "https://localhost:7265/api/verification";
+const API = process.env.REACT_APP_API_URL;
 
 // ikony alertów
 const icons = {
@@ -28,7 +27,7 @@ function FitBounds({ reports }) {
   useEffect(() => {
     if (reports.length === 0) return;
     const bounds = L.latLngBounds(
-      reports.map((r) => [r.latitude, r.longitude])
+      reports.map((r) => [r.latitude, r.longitude]),
     );
     map.fitBounds(bounds, { padding: [50, 50] });
   }, [reports, map]);
@@ -47,7 +46,7 @@ export default function MapPage() {
 
   async function fetchReports() {
     try {
-      const res = await fetch(API_URL);
+      const res = await fetch(`${API}/api/report`);
       const data = await res.json();
       setReports(data);
     } catch (err) {
@@ -63,13 +62,16 @@ export default function MapPage() {
     }
 
     try {
-      const res = await fetch(`${VERIFY_URL}/${reportId}?confirm=${confirm}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`,
+      const res = await fetch(
+        `${API}/api/verification/${reportId}?confirm=${confirm}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
         },
-      });
+      );
 
       if (!res.ok) {
         const errMsg = await res.text();
@@ -89,8 +91,8 @@ export default function MapPage() {
                 rejectionsCount: updated.rejectionsCount,
                 isActive: updated.isActive,
               }
-            : r
-        )
+            : r,
+        ),
       );
     } catch (err) {
       console.error("Błąd weryfikacji:", err);
@@ -116,7 +118,7 @@ export default function MapPage() {
           // .filter((r) => r.isActive) // dodanie powoduje znikanie nie aktywnych zgłoszeń z mapy
           .map((r) => {
             const delayMinutes = Math.abs(
-              (new Date(r.scheduledArrival) - new Date(r.createdAt)) / 60000
+              (new Date(r.scheduledArrival) - new Date(r.createdAt)) / 60000,
             );
 
             const icon = delayMinutes >= 30 ? icons.red : icons.yellow;

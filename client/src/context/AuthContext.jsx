@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
+const API = process.env.REACT_APP_API_URL;
 const AuthContext = createContext(null);
 export const useAuth = () => useContext(AuthContext);
 
@@ -37,7 +38,7 @@ export default function AuthProvider({ children }) {
 
   const refreshUser = async (token) => {
     try {
-      const res = await fetch("https://localhost:7265/api/User/me", {
+      const res = await fetch(`${API}/api/User/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Nie udało się pobrać danych użytkownika.");
@@ -48,7 +49,7 @@ export default function AuthProvider({ children }) {
         role: resolveRole({ ...data, token }),
       };
       setUser(normalized);
-      localStorage.setItem("auth", JSON.stringify(normalized));
+      sessionStorage.setItem("auth", JSON.stringify(normalized));
     } catch (e) {
       console.error(e);
       logout();
@@ -56,13 +57,13 @@ export default function AuthProvider({ children }) {
   };
 
   useEffect(() => {
-    const saved = localStorage.getItem("auth");
+    const saved = sessionStorage.getItem("auth");
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
         setUser(parsed);
       } catch {
-        localStorage.removeItem("auth");
+        sessionStorage.removeItem("auth");
       }
     }
     setLoading(false);

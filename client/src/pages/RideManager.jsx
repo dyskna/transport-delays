@@ -7,9 +7,9 @@ export default function RideManager() {
   const { user } = useAuth();
   const [rides, setRides] = useState([]);
   const [loading, setLoading] = useState(true);
-  const API = "https://localhost:7265/api/Ride";
+  const API = process.env.REACT_APP_API_URL;
 
-  // ✅ używamy useCallback, aby uniknąć ostrzeżeń ESLint
+  // używamy useCallback, aby uniknąć ostrzeżeń ESLint
   const fetchRides = useCallback(async () => {
     try {
       const res = await fetch(API, {
@@ -28,7 +28,7 @@ export default function RideManager() {
     fetchRides();
     const interval = setInterval(fetchRides, 15000);
     return () => clearInterval(interval);
-  }, [fetchRides]); // ✅ teraz wszystko jest zgodne z zasadami hooków
+  }, [fetchRides]);
 
   function getStatusColor(delay, cancelled) {
     if (cancelled) return "cancelled";
@@ -86,7 +86,7 @@ export default function RideManager() {
                   <span
                     className={`status-dot-r ${getStatusColor(
                       r.delayMinutes,
-                      r.isCancelled
+                      r.isCancelled,
                     )}`}
                   />
                 </td>

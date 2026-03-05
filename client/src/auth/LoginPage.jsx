@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import AuthHeader from "../components/AuthHeader";
-import Alert from "../components/Alert"; // 🟢 dodane
+import Alert from "../components/Alert";
 import eyeOpen from "../assets/eyeopen.png";
 import eyeClosed from "../assets/eyeclosed.png";
 
@@ -10,13 +10,14 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [alert, setAlert] = useState({ message: "", type: "" }); // 🟢 zamiast error
+  const [alert, setAlert] = useState({ message: "", type: "" });
 
   const navigate = useNavigate();
   const location = useLocation();
-  const infoMessage = location.state?.info; // np. z rejestracji lub resetu
+  const infoMessage = location.state?.info;
 
   const { login } = useAuth();
+  const API = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     if (infoMessage) {
@@ -31,7 +32,7 @@ export default function LoginPage() {
     setAlert({ message: "", type: "" });
 
     try {
-      const response = await fetch("https://localhost:7265/api/Auth/login", {
+      const response = await fetch(`${API}/api/Auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

@@ -25,23 +25,25 @@ namespace server.Controllers
             _config = config;
         }
 
-        // === WERYFIKACJA EMAILA ===
         [HttpGet("verify")]
         public async Task<IActionResult> Verify(string token)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.EmailConfirmationToken == token);
+            var user = await _context.Users.FirstOrDefaultAsync(u =>
+                u.EmailConfirmationToken == token &&
+                u.EmailConfirmationTokenExpires > DateTime.UtcNow);
+
             if (user == null)
-                return BadRequest("Nieprawidłowy token.");
+                return BadRequest("Nieprawidłowy lub przeterminowany token.");
 
             user.IsEmailConfirmed = true;
             user.EmailConfirmationToken = null;
+            user.EmailConfirmationTokenExpires = null;
             await _context.SaveChangesAsync();
 
             var frontendUrl = _config["Urls:Frontend"] ?? "http://localhost:3000";
             return Redirect($"{frontendUrl}/logowanie?status=verified");
         }
 
-        // === REJESTRACJA ===
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterRequest request)
         {
@@ -49,13 +51,13 @@ namespace server.Controllers
                 return BadRequest("Użytkownik o tym adresie e-mail już istnieje.");
 
             var token = Guid.NewGuid().ToString();
-
             var user = new User
             {
                 Email = request.Email,
                 PasswordHash = PasswordHelper.HashPassword(request.Password),
                 DisplayName = request.DisplayName ?? request.Email.Split('@')[0],
                 EmailConfirmationToken = token,
+                EmailConfirmationTokenExpires = DateTime.UtcNow.AddMinutes(15),
                 Role = UserRole.Passenger,
                 ReputationPoints = 0,
                 ReportsCount = 0
@@ -73,7 +75,6 @@ namespace server.Controllers
             return Ok(new { message = "Rejestracja zakończona pomyślnie. Sprawdź swoją skrzynkę mailową." });
         }
 
-        // === LOGOWANIE ===
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequest request)
         {
@@ -95,7 +96,6 @@ namespace server.Controllers
             });
         }
 
-        // === RESET HASŁA - WYSŁANIE LINKU ===
         [HttpPost("request-password-reset")]
         public async Task<IActionResult> RequestPasswordReset([FromBody] ResetPasswordEmailRequest request)
         {
@@ -117,7 +117,6 @@ namespace server.Controllers
             return Ok(new { message = "Jeśli adres e-mail jest poprawny, wysłano link do resetowania hasła." });
         }
 
-        // === RESET HASŁA - USTAWIENIE NOWEGO ===
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
         {
@@ -135,7 +134,6 @@ namespace server.Controllers
             return Ok(new { message = "Hasło zostało zresetowane." });
         }
 
-        // === ZMIANA HASŁA PO ZALOGOWANIU ===
         [Authorize]
         [HttpPut("change-password")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)

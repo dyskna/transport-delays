@@ -16,7 +16,7 @@ import { Link } from "react-router-dom";
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const { user, loading } = useAuth(); // dodane loading
+  const { user, loading } = useAuth();
 
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
@@ -30,6 +30,8 @@ export default function HomePage() {
 
   const calendarRef = useRef(null);
   const timeRef = useRef(null);
+
+  const API = process.env.REACT_APP_API_URL;
 
   const handleSwap = () => {
     setFrom(to);
@@ -81,9 +83,9 @@ export default function HomePage() {
 
     try {
       const res = await fetch(
-        `https://localhost:7265/api/Ride/search?from=${encodeURIComponent(
-          from
-        )}&to=${encodeURIComponent(to)}&time=${encodeURIComponent(time)}`
+        `${API}/api/Ride/search?from=${encodeURIComponent(
+          from,
+        )}&to=${encodeURIComponent(to)}&time=${encodeURIComponent(time)}`,
       );
 
       if (!res.ok) throw new Error("Błąd wyszukiwania");
@@ -313,13 +315,13 @@ export default function HomePage() {
                         <td>
                           {new Date(r.scheduledDeparture).toLocaleTimeString(
                             "pl-PL",
-                            { hour: "2-digit", minute: "2-digit" }
+                            { hour: "2-digit", minute: "2-digit" },
                           )}
                         </td>
                         <td>
                           {new Date(r.scheduledArrival).toLocaleTimeString(
                             "pl-PL",
-                            { hour: "2-digit", minute: "2-digit" }
+                            { hour: "2-digit", minute: "2-digit" },
                           )}
                         </td>
                         <td>
@@ -331,10 +333,10 @@ export default function HomePage() {
                               r.isCancelled
                                 ? "cancelled"
                                 : r.delayMinutes >= 30
-                                ? "red"
-                                : r.delayMinutes > 0
-                                ? "yellow"
-                                : "green"
+                                  ? "red"
+                                  : r.delayMinutes > 0
+                                    ? "yellow"
+                                    : "green"
                             }`}
                           />
                         </td>

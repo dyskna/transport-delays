@@ -8,6 +8,7 @@ import trainIcon from "../assets/transport.png";
 export default function AddAlertPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const API = process.env.REACT_APP_API_URL;
 
   const [form, setForm] = useState({
     rideId: 0,
@@ -24,11 +25,11 @@ export default function AddAlertPage() {
   const [rides, setRides] = useState([]);
 
   useEffect(() => {
-    fetch("https://localhost:7265/api/ride")
+    fetch(`${API}/api/ride`)
       .then((res) => res.json())
       .then((data) => setRides(data))
       .catch((err) => console.error("Błąd przy pobieraniu tras:", err));
-  }, []);
+  }, [API]);
 
   if (!user?.token) {
     navigate("/logowanie");
@@ -58,7 +59,7 @@ export default function AddAlertPage() {
     setAlert({ message: "", type: "" });
 
     try {
-      const res = await fetch("https://localhost:7265/api/report", {
+      const res = await fetch(`${API}/api/report`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

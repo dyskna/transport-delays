@@ -6,11 +6,11 @@ export default function CheckAlert() {
   const { user } = useAuth();
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const API = process.env.REACT_APP_API_URL;
 
-  // ✅ używamy useCallback, żeby uniknąć ostrzeżeń ESLint
   const fetchAlerts = useCallback(async () => {
     try {
-      const res = await fetch("https://localhost:7265/api/report", {
+      const res = await fetch(`${API}/api/report`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${user?.token}`,
@@ -24,11 +24,11 @@ export default function CheckAlert() {
     } finally {
       setLoading(false);
     }
-  }, [user?.token]);
+  }, [API, user?.token]);
 
   useEffect(() => {
     fetchAlerts();
-  }, [fetchAlerts]); // ✅ poprawne zależności, bez ostrzeżeń
+  }, [fetchAlerts]);
 
   // === WYZNACZANIE ŚCIEŻKI POWROTU W ZALEŻNOŚCI OD ROLI ===
   function getReturnPath() {

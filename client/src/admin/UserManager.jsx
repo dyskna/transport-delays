@@ -10,12 +10,12 @@ export default function UserManager() {
   const [loading, setLoading] = useState(true);
   const [editingUserId, setEditingUserId] = useState(null);
   const [newReputation, setNewReputation] = useState("");
-  const API = "https://localhost:7265/api/User/all";
+  const API = process.env.REACT_APP_API_URL;
 
-  // ✅ używamy useCallback, aby uniknąć ostrzeżenia ESLint
+  // używamy useCallback, aby uniknąć ostrzeżenia ESLint
   const fetchUsers = useCallback(async () => {
     try {
-      const res = await fetch(API, {
+      const res = await fetch(`${API}/api/User/all`, {
         headers: { Authorization: `Bearer ${user?.token}` },
       });
       const data = await res.json();
@@ -29,21 +29,18 @@ export default function UserManager() {
 
   useEffect(() => {
     fetchUsers();
-  }, [fetchUsers]); // ✅ dodano fetchUsers jako zależność
+  }, [fetchUsers]);
 
   async function handleReputationSave(userId) {
     try {
-      const res = await fetch(
-        `https://localhost:7265/api/User/reputation/${userId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user?.token}`,
-          },
-          body: JSON.stringify({ reputationPoints: Number(newReputation) }),
-        }
-      );
+      const res = await fetch(`${API}/api/User/reputation/${userId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user?.token}`,
+        },
+        body: JSON.stringify({ reputationPoints: Number(newReputation) }),
+      });
 
       if (!res.ok) throw new Error("Błąd aktualizacji reputacji");
 
@@ -52,8 +49,8 @@ export default function UserManager() {
         prev.map((u) =>
           u.id === userId
             ? { ...u, reputationPoints: Number(newReputation) }
-            : u
-        )
+            : u,
+        ),
       );
 
       setEditingUserId(null);
