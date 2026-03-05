@@ -5,7 +5,9 @@ using server.Data;
 using server.Services;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using DotNetEnv;
 
+Env.Load();
 var builder = WebApplication.CreateBuilder(args);
 
 // ===========================
