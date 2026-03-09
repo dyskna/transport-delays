@@ -20,7 +20,7 @@ namespace server.Services
             try
             {
                 var client = new TcpClient();
-                await client.ConnectAsync("smtp.gmail.com", 587);
+                await client.ConnectAsync("smtp.gmail.com", 465);
                 Console.WriteLine("SMTP CONNECTION OK");
             }
             catch (Exception ex)
