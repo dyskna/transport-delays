@@ -15,20 +15,6 @@ namespace server.Services
 
         public async Task SendEmailAsync(string to, string subject, string body)
         {
-            Console.WriteLine("START SMTP TEST");
-
-            try
-            {
-                var client = new TcpClient();
-                await client.ConnectAsync("smtp.gmail.com", 465);
-                Console.WriteLine("SMTP CONNECTION OK");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("SMTP CONNECTION FAILED: " + ex.Message);
-            }
-
-            Console.WriteLine("CONTINUING EMAIL SEND");
 
             var host = _config["Smtp:Host"]
                 ?? throw new InvalidOperationException("Brak Smtp:Host w konfiguracji");
