@@ -11,7 +11,7 @@ Env.Load();
 var builder = WebApplication.CreateBuilder(args);
 
 // Na Railway (i innych chmurach) aplikacja musi słuchać na porcie z zmiennej PORT
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+var port = Environment.GetEnvironmentVariable("PORT") ?? "7265";
 builder.WebHost.UseUrls($"http://*:{port}");
 
 // ===========================
@@ -85,7 +85,7 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(
             "http://localhost:3000",   // frontend lokalny HTTP
             "https://localhost:3000",  // frontend lokalny HTTPS
-            "https://transport-delays.pages.dev"  // docelowa domena produkcyjna
+            "transport-delays.pages.dev"  // docelowa domena produkcyjna
         )
         .AllowAnyHeader()
         .AllowAnyMethod();
@@ -109,6 +109,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowFrontend");
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
