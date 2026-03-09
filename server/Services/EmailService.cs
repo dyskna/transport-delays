@@ -1,6 +1,6 @@
 using System.Net;
 using System.Net.Mail;
-using Microsoft.Extensions.Configuration;
+using System.Net.Sockets;
 
 namespace server.Services
 {
@@ -15,6 +15,16 @@ namespace server.Services
 
         public async Task SendEmailAsync(string to, string subject, string body)
         {
+            try
+            {
+                var client = new TcpClient();
+                await client.ConnectAsync("smtp.gmail.com", 587);
+                Console.WriteLine("SMTP connection OK");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("SMTP connection FAILED: " + ex.Message);
+            }
             var host = _config["Smtp:Host"]
                 ?? throw new InvalidOperationException("Brak Smtp:Host w konfiguracji");
 
