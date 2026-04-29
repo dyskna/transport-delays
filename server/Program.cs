@@ -10,10 +10,6 @@ using DotNetEnv;
 Env.Load();
 var builder = WebApplication.CreateBuilder(args);
 
-// Na Railway (i innych chmurach) aplikacja musi słuchać na porcie z zmiennej PORT
-var port = Environment.GetEnvironmentVariable("PORT") ?? "7265";
-builder.WebHost.UseUrls($"http://*:{port}");
-
 // ===========================
 // JWT konfiguracja
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
