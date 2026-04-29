@@ -84,7 +84,8 @@ builder.Services.AddCors(options =>
             "https://transport-delays.pages.dev"  // docelowa domena produkcyjna
         )
         .AllowAnyHeader()
-        .AllowAnyMethod();
+        .AllowAnyMethod()
+        .AllowCredentials();
     });
 });
 
